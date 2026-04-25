@@ -1,0 +1,68 @@
+[gd_scene load_steps=5 format=3 uid="uid://game00001"]
+
+[ext_resource type="Script" path="res://scripts/game/game.gd" id="1_game"]
+[ext_resource type="Script" path="res://scripts/game/circle_visual.gd" id="2_circle"]
+[ext_resource type="Script" path="res://scripts/game/note_spawner.gd" id="3_spawner"]
+[ext_resource type="Script" path="res://scripts/game/hit_detector.gd" id="4_hitdet"]
+[ext_resource type="PackedScene" path="res://scenes/pause_menu.tscn" id="5_pause"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -1
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.05, 0.05, 0.1, 1)
+
+[node name="CenterCircle" type="Node2D" parent="."]
+script = ExtResource("2_circle")
+
+[node name="NoteSpawner" type="Node2D" parent="."]
+script = ExtResource("3_spawner")
+
+[node name="HitDetector" type="Node2D" parent="."]
+script = ExtResource("4_hitdet")
+
+[node name="PauseMenu" parent="." instance=ExtResource("5_pause")]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="ScoreLabel" type="Label" parent="HUD"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 300.0
+offset_bottom = 40.0
+text = "Score: 0"
+theme_override_font_sizes/font_size = 22
+
+[node name="FundsLabel" type="Label" parent="HUD"]
+offset_left = 16.0
+offset_top = 40.0
+offset_right = 300.0
+offset_bottom = 68.0
+text = "Funds: 0.0"
+theme_override_font_sizes/font_size = 18
+
+[node name="ShieldsLabel" type="Label" parent="HUD"]
+offset_left = 16.0
+offset_top = 64.0
+offset_right = 300.0
+offset_bottom = 92.0
+text = "Shields: 0"
+theme_override_font_sizes/font_size = 18
+
+[node name="TimingLabel" type="Label" parent="HUD"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.35
+anchor_right = 0.5
+anchor_bottom = 0.35
+offset_left = -100.0
+offset_right = 100.0
+offset_bottom = 40.0
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 36

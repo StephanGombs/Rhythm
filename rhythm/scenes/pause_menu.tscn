@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=3 uid="uid://pausemenu1"]
+
+[ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="1_pausemenu"]
+
+[node name="PauseMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_pausemenu")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.6)
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -120.0
+offset_right = 100.0
+offset_bottom = 120.0
+theme_override_constants/separation = 12
+
+[node name="PausedLabel" type="Label" parent="VBox"]
+text = "PAUSED"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 32
+
+[node name="ResumeButton" type="Button" parent="VBox"]
+text = "Resume"
+
+[node name="RestartButton" type="Button" parent="VBox"]
+text = "Restart"
+
+[node name="MainMenuButton" type="Button" parent="VBox"]
+text = "Main Menu"
+
+[node name="QuitButton" type="Button" parent="VBox"]
+text = "Quit"
+
+[connection signal="pressed" from="VBox/ResumeButton" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="VBox/RestartButton" to="." method="_on_restart_pressed"]
+[connection signal="pressed" from="VBox/MainMenuButton" to="." method="_on_main_menu_pressed"]
+[connection signal="pressed" from="VBox/QuitButton" to="." method="_on_quit_pressed"]
