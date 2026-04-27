@@ -1,8 +1,12 @@
 extends Control
 
-@onready var username_input: LineEdit = $VBox/UsernameInput
-@onready var password_input: LineEdit = $VBox/PasswordInput
-@onready var status_label: Label = $VBox/StatusLabel
+@onready var username_input:   LineEdit = $VBox/UsernameInput
+@onready var password_input:   LineEdit = $VBox/PasswordInput
+@onready var status_label:     Label    = $VBox/StatusLabel
+@onready var login_button:     Button   = $VBox/HBoxAuth/LoginButton
+@onready var register_button:  Button   = $VBox/HBoxAuth/RegisterButton
+
+var _pending_action: String = ""
 
 
 func _ready() -> void:
@@ -11,17 +15,33 @@ func _ready() -> void:
 
 func _on_start_pressed() -> void:
 	if not UserSession.is_logged_in:
-		status_label.text = "Please log in first."
+		_set_status("Please log in first.", false)
 		return
 	get_tree().change_scene_to_file("res://scenes/game.tscn")
 
 
 func _on_login_pressed() -> void:
-	ApiClient.login(username_input.text.strip_edges(), password_input.text)
+	var user := username_input.text.strip_edges()
+	var pass_ := password_input.text
+	if user.is_empty() or pass_.is_empty():
+		_set_status("Please enter a username and password.", false)
+		return
+	_set_status("Logging in...", true)
+	_set_auth_buttons(false)
+	_pending_action = "login"
+	ApiClient.login(user, pass_)
 
 
 func _on_register_pressed() -> void:
-	ApiClient.register(username_input.text.strip_edges(), password_input.text)
+	var user := username_input.text.strip_edges()
+	var pass_ := password_input.text
+	if user.is_empty() or pass_.is_empty():
+		_set_status("Please enter a username and password.", false)
+		return
+	_set_status("Creating account...", true)
+	_set_auth_buttons(false)
+	_pending_action = "register"
+	ApiClient.register(user, pass_)
 
 
 func _on_leaderboard_pressed() -> void:
@@ -30,7 +50,7 @@ func _on_leaderboard_pressed() -> void:
 
 func _on_shop_pressed() -> void:
 	if not UserSession.is_logged_in:
-		status_label.text = "Please log in first."
+		_set_status("Please log in first.", false)
 		return
 	get_tree().change_scene_to_file("res://scenes/shop.tscn")
 
@@ -40,8 +60,50 @@ func _on_quit_pressed() -> void:
 
 
 func _on_api_response(response_code: int, body: Dictionary) -> void:
-	if response_code == 200 or response_code == 201:
-		UserSession.login(body)
-		status_label.text = "Logged in as " + UserSession.username
-	else:
-		status_label.text = body.get("detail", "Error " + str(response_code))
+	_set_auth_buttons(true)
+
+	if response_code == 0:
+		_set_status("Cannot reach the server. Is it running?", false)
+		_pending_action = ""
+		return
+
+	match _pending_action:
+		"login":
+			match response_code:
+				200:
+					UserSession.login(body)
+					_set_status("Welcome back, %s!" % UserSession.username, true)
+					password_input.text = ""
+				401:
+					_set_status("Incorrect username or password.", false)
+				404:
+					_set_status("No account found with that username.", false)
+				422:
+					_set_status("Please enter a valid username and password.", false)
+				_:
+					_set_status(body.get("detail", "Login failed (error %d)." % response_code), false)
+
+		"register":
+			match response_code:
+				201:
+					UserSession.login(body)
+					_set_status("Account created! Welcome, %s." % UserSession.username, true)
+					password_input.text = ""
+				409:
+					_set_status("That username is already taken.", false)
+				422:
+					_set_status("Please enter a valid username and password.", false)
+				_:
+					_set_status(body.get("detail", "Registration failed (error %d)." % response_code), false)
+
+	_pending_action = ""
+
+
+func _set_status(message: String, success: bool) -> void:
+	status_label.text = message
+	status_label.modulate = Color(0.4, 1.0, 0.4) if success else Color(1.0, 0.4, 0.4)
+
+
+func _set_auth_buttons(enabled: bool) -> void:
+	login_button.disabled    = not enabled
+	register_button.disabled = not enabled

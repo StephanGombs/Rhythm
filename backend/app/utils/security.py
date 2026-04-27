@@ -5,7 +5,7 @@ from ..config import settings
 
 
 def hash_password(password: str) -> str:
-    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=8)).decode()
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

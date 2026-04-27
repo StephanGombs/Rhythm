@@ -2,10 +2,10 @@ extends Node2D
 
 const RADIUS := 80.0
 const SECTOR_COLORS = [
-	Color(1, 0.2, 0.2, 0.5),   # UP    — red
-	Color(0.2, 0.4, 1, 0.5),   # DOWN  — blue
-	Color(0.2, 0.9, 0.2, 0.5), # LEFT  — green
-	Color(1, 0.9, 0.1, 0.5),   # RIGHT — yellow
+	Color(1, 0.9, 0.1, 0.5),   # sector 0 = 0° = RIGHT side  → yellow
+	Color(0.2, 0.4, 1, 0.5),   # sector 1 = 90° = DOWN side  → blue
+	Color(0.2, 0.9, 0.2, 0.5), # sector 2 = 180° = LEFT side → green
+	Color(1, 0.2, 0.2, 0.5),   # sector 3 = 270° = UP side   → red
 ]
 
 
