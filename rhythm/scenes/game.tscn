@@ -1,62 +1,61 @@
-[gd_scene load_steps=5 format=3 uid="uid://game00001"]
+[gd_scene format=3 uid="uid://game00001"]
 
-[ext_resource type="Script" path="res://scripts/game/game.gd" id="1_game"]
-[ext_resource type="Script" path="res://scripts/game/circle_visual.gd" id="2_circle"]
+[ext_resource type="Script" uid="uid://b4o6xjn0ksfsr" path="res://scripts/game/game.gd" id="1_game"]
+[ext_resource type="Script" uid="uid://b6i0ji3ki5sur" path="res://scripts/game/circle_visual.gd" id="2_circle"]
 [ext_resource type="Script" path="res://scripts/game/note_spawner.gd" id="3_spawner"]
 [ext_resource type="Script" path="res://scripts/game/hit_detector.gd" id="4_hitdet"]
-[ext_resource type="PackedScene" path="res://scenes/pause_menu.tscn" id="5_pause"]
+[ext_resource type="PackedScene" uid="uid://pausemenu1" path="res://scenes/pause_menu.tscn" id="5_pause"]
 
-[node name="Game" type="Node2D"]
+[node name="Game" type="Node2D" unique_id=488596364]
 script = ExtResource("1_game")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=32610627]
 z_index = -1
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 1280.0
 offset_bottom = 720.0
 color = Color(0.05, 0.05, 0.1, 1)
 
-[node name="CenterCircle" type="Node2D" parent="."]
+[node name="CenterCircle" type="Node2D" parent="." unique_id=176385963]
 script = ExtResource("2_circle")
 
-[node name="NoteSpawner" type="Node2D" parent="."]
+[node name="NoteSpawner" type="Node2D" parent="." unique_id=369454044]
 script = ExtResource("3_spawner")
 
-[node name="HitDetector" type="Node2D" parent="."]
+[node name="HitDetector" type="Node2D" parent="." unique_id=188780472]
 script = ExtResource("4_hitdet")
 
-[node name="PauseMenu" parent="." instance=ExtResource("5_pause")]
+[node name="PauseMenu" parent="." unique_id=220944245 instance=ExtResource("5_pause")]
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=213483488]
 
-[node name="ScoreLabel" type="Label" parent="HUD"]
+[node name="ScoreLabel" type="Label" parent="HUD" unique_id=1815835184]
 offset_left = 16.0
 offset_top = 12.0
 offset_right = 300.0
 offset_bottom = 40.0
-text = "Score: 0"
 theme_override_font_sizes/font_size = 22
+text = "Score: 0"
 
-[node name="FundsLabel" type="Label" parent="HUD"]
+[node name="FundsLabel" type="Label" parent="HUD" unique_id=820871919]
 offset_left = 16.0
 offset_top = 40.0
 offset_right = 300.0
 offset_bottom = 68.0
-text = "Funds: 0.0"
 theme_override_font_sizes/font_size = 18
+text = "Funds: 0.0"
 
-[node name="ShieldsLabel" type="Label" parent="HUD"]
+[node name="ShieldsLabel" type="Label" parent="HUD" unique_id=1891183129]
 offset_left = 16.0
 offset_top = 64.0
 offset_right = 300.0
 offset_bottom = 92.0
-text = "Shields: 0"
 theme_override_font_sizes/font_size = 18
+text = "Shields: 0"
 
-[node name="TimingLabel" type="Label" parent="HUD"]
-layout_mode = 3
-anchors_preset = 8
+[node name="TimingLabel" type="Label" parent="HUD" unique_id=1014958765]
+anchors_preset = -1
 anchor_left = 0.5
 anchor_top = 0.35
 anchor_right = 0.5
@@ -64,5 +63,7 @@ anchor_bottom = 0.35
 offset_left = -100.0
 offset_right = 100.0
 offset_bottom = 40.0
-horizontal_alignment = 1
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_font_sizes/font_size = 36
+horizontal_alignment = 1

@@ -1,23 +1,33 @@
-[gd_scene load_steps=2 format=3 uid="uid://mainmenu01"]
+[gd_scene format=3 uid="uid://mainmenu01"]
 
 [ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_mainmenu"]
+[ext_resource type="Texture2D" uid="uid://buulggig741oh" path="res://assets/background.jpg" id="2_ekxnf"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=1976500352]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_mainmenu")
 
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 3
+[node name="Background" type="ColorRect" parent="." unique_id=1951561808]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.05, 0.05, 0.1, 1)
 
-[node name="VBox" type="VBoxContainer" parent="."]
-layout_mode = 3
+[node name="Sprite2D" type="Sprite2D" parent="Background" unique_id=886754803]
+position = Vector2(641.5, 359.9999)
+scale = Vector2(0.2344208, 0.19768718)
+texture = ExtResource("2_ekxnf")
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=63239594]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -27,48 +37,60 @@ offset_left = -160.0
 offset_top = -220.0
 offset_right = 160.0
 offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 12
 
-[node name="TitleLabel" type="Label" parent="VBox"]
+[node name="TitleLabel" type="Label" parent="VBox" unique_id=376184418]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "RHYTHM"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 48
 
-[node name="UsernameInput" type="LineEdit" parent="VBox"]
-placeholder_text = "Username"
+[node name="UsernameInput" type="LineEdit" parent="VBox" unique_id=1221414704]
 custom_minimum_size = Vector2(320, 40)
+layout_mode = 2
+placeholder_text = "Username"
 
-[node name="PasswordInput" type="LineEdit" parent="VBox"]
+[node name="PasswordInput" type="LineEdit" parent="VBox" unique_id=801080854]
+custom_minimum_size = Vector2(320, 40)
+layout_mode = 2
 placeholder_text = "Password"
 secret = true
-custom_minimum_size = Vector2(320, 40)
 
-[node name="StatusLabel" type="Label" parent="VBox"]
-text = ""
+[node name="StatusLabel" type="Label" parent="VBox" unique_id=180630893]
+layout_mode = 2
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="HBoxAuth" type="HBoxContainer" parent="VBox"]
+[node name="HBoxAuth" type="HBoxContainer" parent="VBox" unique_id=726654122]
+layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="LoginButton" type="Button" parent="VBox/HBoxAuth"]
+[node name="LoginButton" type="Button" parent="VBox/HBoxAuth" unique_id=1836724722]
+layout_mode = 2
 size_flags_horizontal = 3
 text = "Login"
 
-[node name="RegisterButton" type="Button" parent="VBox/HBoxAuth"]
+[node name="RegisterButton" type="Button" parent="VBox/HBoxAuth" unique_id=1831277525]
+layout_mode = 2
 size_flags_horizontal = 3
 text = "Register"
 
-[node name="StartButton" type="Button" parent="VBox"]
+[node name="StartButton" type="Button" parent="VBox" unique_id=1473008613]
+layout_mode = 2
 text = "Start Game"
 
-[node name="LeaderboardButton" type="Button" parent="VBox"]
+[node name="LeaderboardButton" type="Button" parent="VBox" unique_id=1336250972]
+layout_mode = 2
 text = "Leaderboard"
 
-[node name="ShopButton" type="Button" parent="VBox"]
+[node name="ShopButton" type="Button" parent="VBox" unique_id=1458037881]
+layout_mode = 2
 text = "Shop"
 
-[node name="QuitButton" type="Button" parent="VBox"]
+[node name="QuitButton" type="Button" parent="VBox" unique_id=246025521]
+layout_mode = 2
 text = "Quit"
 
 [connection signal="pressed" from="VBox/HBoxAuth/LoginButton" to="." method="_on_login_pressed"]
