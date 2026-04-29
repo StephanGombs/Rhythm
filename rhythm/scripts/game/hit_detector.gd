@@ -1,6 +1,6 @@
 extends Node2D
 
-const HIT_RADIUS := 80.0
+const HIT_RADIUS := 300.0
 
 
 func _process(_delta: float) -> void:
