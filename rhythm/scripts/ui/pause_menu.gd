@@ -1,7 +1,18 @@
 extends Control
 
+const UIPolishScript = preload("res://scripts/ui/ui_polish.gd")
+
 
 func _ready() -> void:
+	UIPolishScript.apply_screen_theme(self)
+	UIPolishScript.add_soft_panel_behind($VBox)
+	UIPolishScript.style_title($VBox/PausedLabel, 38)
+	UIPolishScript.style_buttons([
+		$VBox/ResumeButton,
+		$VBox/RestartButton,
+		$VBox/MainMenuButton,
+		$VBox/QuitButton,
+	])
 	hide()
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
@@ -13,6 +24,10 @@ func _input(event: InputEvent) -> void:
 
 func show_menu() -> void:
 	show()
+	$VBox.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	var tween := create_tween()
+	tween.tween_property($VBox, "modulate:a", 1.0, 0.18)
+	$VBox/ResumeButton.grab_focus()
 	get_tree().paused = true
 
 

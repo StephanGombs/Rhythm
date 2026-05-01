@@ -1,5 +1,7 @@
 extends Control
 
+const UIPolishScript = preload("res://scripts/ui/ui_polish.gd")
+
 @onready var funds_label: Label = $VBox/FundsLabel
 @onready var shields_label: Label = $VBox/ShieldsLabel
 @onready var quantity_input: SpinBox = $VBox/QuantityInput
@@ -9,6 +11,13 @@ var _pending_action: String = ""
 
 
 func _ready() -> void:
+	UIPolishScript.apply_screen_theme(self)
+	UIPolishScript.add_soft_panel_behind($VBox)
+	UIPolishScript.style_title($VBox/TitleLabel, 42)
+	UIPolishScript.style_status_label(status_label)
+	UIPolishScript.style_buttons([$VBox/BuyButton, $VBox/BackButton])
+	quantity_input.custom_minimum_size = Vector2(0, 44)
+	UIPolishScript.animate_scene_in(self)
 	ApiClient.request_completed.connect(_on_api_response)
 	_refresh_display()
 
@@ -27,7 +36,7 @@ func _on_buy_pressed() -> void:
 		status_label.text = "Enter a valid quantity."
 		return
 	_pending_action = "purchase"
-	status_label.text = "Purchasing..."
+	status_label.text = "Purchasing %d shield(s)..." % qty
 	status_label.modulate = Color.WHITE
 	ApiClient.purchase_shields(UserSession.user_id, qty)
 

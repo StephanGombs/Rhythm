@@ -31,6 +31,8 @@ var _game_over_shown: bool = false
 var _last_hearts: int = 3
 var _shield_visual_state: String = "empty"
 var _shield_visual_version: int = 0
+var _shield_activation_pending: bool = false
+var _hud_backdrop: ColorRect
 
 
 func _ready() -> void:
@@ -41,8 +43,10 @@ func _ready() -> void:
 	GameManager.shield_state_updated.connect(_on_shield_state_updated)
 	GameManager.game_finished.connect(_on_game_finished)
 	GameManager.note_hit.connect(_on_note_hit)
+	ApiClient.request_completed_with_context.connect(_on_api_response)
 	music_player.finished.connect(_on_music_finished)
 	GameManager.start_game()
+	_style_hud()
 	_refresh_hud()
 	_load_selected_music()
 	_start_countdown()
@@ -59,7 +63,28 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") and not get_tree().paused and not _game_over_shown:
 		pause_menu.show_menu()
 	elif event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_SPACE:
+		_request_shield_activation()
+
+
+func _request_shield_activation() -> void:
+	if _shield_activation_pending:
+		return
+	if GameManager.shield_active:
+		return
+	if GameManager.shields <= 0:
+		# show a brief feedback when no shields available
+		timing_label.text = "No shields"
+		_timing_timer = 0.8
+		return
+	if not UserSession.is_logged_in:
 		GameManager.activate_shield()
+		return
+
+	# Log current state for debugging
+	print("[Shield] Requesting activation — user_id=%s logged_in=%s shields=%d shield_active=%s" % [UserSession.user_id, str(UserSession.is_logged_in), GameManager.shields, str(GameManager.shield_active)])
+
+	_shield_activation_pending = true
+	ApiClient.consume_shield(UserSession.user_id)
 
 
 func _refresh_hud() -> void:
@@ -69,6 +94,24 @@ func _refresh_hud() -> void:
 	_update_hearts(GameManager.hearts, false)
 	_set_shield_visual("empty")
 	countdown_label.hide()
+
+
+func _style_hud() -> void:
+	_hud_backdrop = ColorRect.new()
+	_hud_backdrop.name = "HudBackdrop"
+	_hud_backdrop.offset_left = 8.0
+	_hud_backdrop.offset_top = 8.0
+	_hud_backdrop.offset_right = 520.0
+	_hud_backdrop.offset_bottom = 170.0
+	_hud_backdrop.color = Color(0.02, 0.06, 0.11, 0.62)
+	$HUD.add_child(_hud_backdrop)
+	$HUD.move_child(_hud_backdrop, 0)
+
+	score_label.add_theme_color_override("font_color", Color(1.0, 0.93, 0.62, 1.0))
+	funds_label.add_theme_color_override("font_color", Color(0.72, 1.0, 0.88, 1.0))
+	shields_label.add_theme_color_override("font_color", Color(0.74, 0.92, 1.0, 1.0))
+	timing_label.add_theme_color_override("font_color", Color(0.98, 0.98, 1.0, 1.0))
+	countdown_label.add_theme_color_override("font_color", Color(0.86, 1.0, 0.76, 1.0))
 
 
 func _on_score_updated(new_score: int) -> void:
@@ -152,6 +195,11 @@ func _on_music_finished() -> void:
 func _on_note_hit(timing: String) -> void:
 	timing_label.text = timing
 	_timing_timer = TIMING_DISPLAY_DURATION
+	timing_label.scale = Vector2(0.86, 0.86)
+	var tween := create_tween()
+	tween.set_trans(Tween.TRANS_BACK)
+	tween.set_ease(Tween.EASE_OUT)
+	tween.tween_property(timing_label, "scale", Vector2.ONE, 0.22)
 	match timing:
 		"Perfect": timing_label.modulate = Color.GOLD
 		"Good":    timing_label.modulate = Color.GREEN
@@ -183,6 +231,30 @@ func _on_game_finished(won: bool, final_score: int, total_funds: float) -> void:
 	_show_end_overlay(final_score, total_funds, won)
 
 
+func _on_api_response(endpoint: String, response_code: int, body: Dictionary) -> void:
+	if not endpoint.ends_with("/shields/consume"):
+		return
+	if not _shield_activation_pending:
+		return
+
+	_shield_activation_pending = false
+	print("[Shield] /shields/consume returned %d" % response_code)
+	if response_code != 200:
+		push_warning(body.get("detail", "Failed to consume shield."))
+		# brief UI feedback
+		timing_label.text = body.get("detail", "Shield failed")
+		_timing_timer = 1.2
+		return
+
+	# success — update local session and activate
+	UserSession.update_from_response(body)
+	print("[Shield] Server confirmed new_shields=%d" % UserSession.shields_owned)
+	GameManager.activate_shield_from_server(UserSession.shields_owned)
+	# visual confirmation
+	timing_label.text = "Shield Activated"
+	_timing_timer = 0.9
+
+
 func _show_end_overlay(score: int, funds: float, won: bool) -> void:
 	var layer := CanvasLayer.new()
 	add_child(layer)
@@ -203,6 +275,22 @@ func _show_end_overlay(score: int, funds: float, won: bool) -> void:
 	panel.offset_right  = 220.0
 	panel.offset_bottom = 170.0
 	layer.add_child(panel)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.04, 0.07, 0.12, 0.95)
+	style.border_color = Color(0.35, 0.92, 1.0, 0.7)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.corner_radius_top_left = 20
+	style.corner_radius_top_right = 20
+	style.corner_radius_bottom_left = 20
+	style.corner_radius_bottom_right = 20
+	style.content_margin_left = 20
+	style.content_margin_right = 20
+	style.content_margin_top = 18
+	style.content_margin_bottom = 18
+	panel.add_theme_stylebox_override("panel", style)
 
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 14)

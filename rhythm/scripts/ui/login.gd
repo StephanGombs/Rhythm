@@ -1,5 +1,7 @@
 extends Control
 
+const UIPolishScript = preload("res://scripts/ui/ui_polish.gd")
+
 @onready var username_input: LineEdit = $VBox/UsernameInput
 @onready var password_input: LineEdit = $VBox/PasswordInput
 @onready var status_label: Label = $VBox/StatusLabel
@@ -10,6 +12,13 @@ var _pending_action: String = ""
 
 
 func _ready() -> void:
+	UIPolishScript.apply_screen_theme(self)
+	UIPolishScript.add_soft_panel_behind($VBox)
+	UIPolishScript.style_title($VBox/TitleLabel, 52)
+	UIPolishScript.style_status_label(status_label)
+	UIPolishScript.style_buttons([login_button, register_button])
+	UIPolishScript.animate_scene_in(self)
+	username_input.grab_focus()
 	ApiClient.request_completed.connect(_on_api_response)
 
 

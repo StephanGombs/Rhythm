@@ -28,6 +28,13 @@ async def get_user(user_id: str, db: AsyncSession = Depends(get_db)):
     return user
 
 
+@router.post("/{user_id}/shields/consume", response_model=UserResponse)
+async def consume_shield(user_id: str, db: AsyncSession = Depends(get_db)):
+    service = UserService(db)
+    user = await service.consume_shield(user_id)
+    return user
+
+
 @router.get("/{user_id}/best-score")
 async def get_best_score(user_id: str, db: AsyncSession = Depends(get_db)):
     from ..services.score_service import ScoreService

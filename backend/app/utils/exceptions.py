@@ -19,3 +19,7 @@ class UserNotFoundError(Exception):
 
 class InvalidQuantityError(Exception):
     pass
+
+
+class InsufficientShieldsError(Exception):
+    pass

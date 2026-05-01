@@ -49,16 +49,40 @@ func begin_play() -> void:
 
 
 func activate_shield() -> bool:
-	if shield_active or shield_broken:
+	if shield_active:
 		return false
 	if shields <= 0:
 		return false
 
+	print("[GameManager] activate_shield() — before: shields=%d shield_active=%s shield_broken=%s" % [shields, str(shield_active), str(shield_broken)])
+
 	shields -= 1
 	UserSession.shields_owned = shields
 	emit_signal("shields_updated", shields)
+	# clear any broken marker when re-activating
+	shield_broken = false
 	shield_active = true
 	emit_signal("shield_state_updated", "filled")
+	print("[GameManager] activate_shield() — after: shields=%d" % shields)
+	return true
+
+
+func activate_shield_from_server(new_shield_count: int) -> bool:
+	if shield_active:
+		return false
+	if new_shield_count < 0:
+		return false
+
+	print("[GameManager] activate_shield_from_server(new_shield_count=%d)" % new_shield_count)
+
+	shields = new_shield_count
+	UserSession.shields_owned = shields
+	emit_signal("shields_updated", shields)
+	# ensure broken reset
+	shield_broken = false
+	shield_active = true
+	emit_signal("shield_state_updated", "filled")
+	print("[GameManager] activated from server, shields=%d" % shields)
 	return true
 
 

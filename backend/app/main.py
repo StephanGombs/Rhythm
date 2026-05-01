@@ -10,6 +10,7 @@ from .utils.exceptions import (
     InsufficientFundsError,
     UserNotFoundError,
     InvalidQuantityError,
+    InsufficientShieldsError,
 )
 
 app = FastAPI(title="Rhythm Game API", debug=settings.debug)
@@ -49,6 +50,11 @@ async def insufficient_funds_handler(request: Request, exc: InsufficientFundsErr
 
 @app.exception_handler(InvalidQuantityError)
 async def invalid_quantity_handler(request: Request, exc: InvalidQuantityError):
+    return JSONResponse(status_code=400, content={"detail": str(exc)})
+
+
+@app.exception_handler(InsufficientShieldsError)
+async def insufficient_shields_handler(request: Request, exc: InsufficientShieldsError):
     return JSONResponse(status_code=400, content={"detail": str(exc)})
 
 

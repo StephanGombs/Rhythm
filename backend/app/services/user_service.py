@@ -4,7 +4,12 @@ from sqlalchemy import select
 from ..models.user import User
 from ..schemas.user import UserCreate
 from ..utils.security import hash_password, verify_password
-from ..utils.exceptions import UserAlreadyExistsError, InvalidCredentialsError, UserNotFoundError
+from ..utils.exceptions import (
+    UserAlreadyExistsError,
+    InvalidCredentialsError,
+    UserNotFoundError,
+    InsufficientShieldsError,
+)
 
 
 class UserService:
@@ -48,5 +53,14 @@ class UserService:
     async def update_shields(self, user_id: str, delta: int) -> User:
         user = await self.get_user_by_id(user_id)
         user.shields_owned = user.shields_owned + delta
+        await self.db.flush()
+        return user
+
+    async def consume_shield(self, user_id: str) -> User:
+        user = await self.get_user_by_id(user_id)
+        if user.shields_owned <= 0:
+            raise InsufficientShieldsError("No shields available to consume")
+
+        user.shields_owned = user.shields_owned - 1
         await self.db.flush()
         return user

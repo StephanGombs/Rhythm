@@ -1,5 +1,7 @@
 extends Control
 
+const UIPolishScript = preload("res://scripts/ui/ui_polish.gd")
+
 const TRACKS := [
 	{
 		"title": "ILYBB",
@@ -25,19 +27,26 @@ const TRACKS := [
 
 @onready var status_label: Label = $VBox/StatusLabel
 @onready var selected_label: Label = $VBox/SelectedLabel
-@onready var track_list: VBoxContainer = $VBox/TrackList
-@onready var start_button: Button = $VBox/StartButton
-@onready var back_button: Button = $VBox/BackButton
+@onready var track_list: VBoxContainer = $VBox/TrackScroll/TrackList
+@onready var start_button: Button = $VBox/Actions/StartButton
+@onready var back_button: Button = $VBox/Actions/BackButton
 
 var _track_buttons: Array[Button] = []
 
 
 func _ready() -> void:
+	UIPolishScript.apply_screen_theme(self)
+	UIPolishScript.add_soft_panel_behind($VBox)
+	UIPolishScript.style_title($VBox/TitleLabel, 46)
+	UIPolishScript.style_status_label(status_label)
 	_build_track_buttons()
 	if UserSession.selected_music_path.is_empty():
 		UserSession.select_music(TRACKS[0]["title"], TRACKS[0]["path"])
 	_refresh_selection()
 	status_label.text = "Choose a song, then start the run."
+	UIPolishScript.style_buttons(_track_buttons)
+	UIPolishScript.style_buttons([start_button, back_button])
+	UIPolishScript.animate_scene_in(self)
 	start_button.pressed.connect(_on_start_pressed)
 	back_button.pressed.connect(_on_back_pressed)
 
@@ -62,6 +71,7 @@ func _refresh_selection() -> void:
 	selected_label.text = "Selected: %s" % UserSession.selected_music_title
 	for button in _track_buttons:
 		button.button_pressed = button.text == UserSession.selected_music_title
+		button.modulate = Color(0.75, 1.0, 0.92, 1.0) if button.button_pressed else Color.WHITE
 
 
 func _on_start_pressed() -> void:
