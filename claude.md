@@ -26,39 +26,71 @@ A rhythm game where players hit directional notes (up, down, left, right) that s
 - Players start with 0 shields (configurable)
 - Shields absorb missed notes without penalty
 - Shields can be purchased in shop with earned funds
-- Each shield = 1 miss forgiveness
+- Each shield = 1 miss forgiveness and is consumed when activated during a run
 
 ## Menus Required
 
-1. **Main Menu**
-   - Start Game
-   - Leaderboard
-   - Shop
-   - Quit
+1. **Login Screen**
+  - Username and password entry
+  - Login
+  - Register
 
-2. **Pause Menu** (during gameplay)
-   - Resume
-   - Restart
-   - Main Menu
-   - Quit
+2. **Home Screen**
+  - Start Game
+  - Leaderboard
+  - Shop
+  - Logout
+  - Quit
 
-3. **Leaderboard Menu**
-   - Display top scores (username + score)
-   - Back to main menu
+3. **Song Selection Screen**
+  - Display available tracks
+  - Select song before starting
+  - Back to home screen
 
-4. **Shop Menu**
-   - Display current account funds
-   - Purchase shields (price per shield)
-   - Display current shield count
-   - Back to main menu
+4. **Pause Menu** (during gameplay)
+  - Resume
+  - Restart
+  - Main Menu
+  - Quit
 
-5. **Quit Menu**
-   - Confirmation dialog before exiting
+5. **Leaderboard Menu**
+  - Display top scores (username + score)
+  - Back to main menu
+
+6. **Shop Menu**
+  - Display current account funds
+  - Purchase shields (price per shield)
+  - Display current shield count
+  - Back to main menu
+
+7. **Game Over Screen**
+  - Retry current song
+  - Continue to song selection
+
+8. **Quit Menu**
+  - Confirmation dialog before exiting
 
 ## Server Architecture
 
 ### Project Structure
 ```
+rhythm/
+├── scenes/
+│   ├── login.tscn
+│   ├── main_menu.tscn           # Home screen after login
+│   ├── music_select.tscn
+│   ├── game.tscn
+│   ├── leaderboard.tscn
+│   ├── shop.tscn
+│   ├── pause_menu.tscn
+│   └── quit_dialog.tscn
+├── scripts/
+│   ├── autoloads/
+│   ├── game/
+│   ├── network/
+│   └── ui/
+└── assets/
+
 backend/
 ├── app/
 │   ├── __init__.py
@@ -569,9 +601,9 @@ func _on_score_submitted(result, response_code, headers, body):
 - Refresh user data periodically to show updated funds/shields
 
 **Game Flow**:
-1. Main Menu → Login/Register → Store user_id
-2. Start Game → Use user_id for gameplay
-3. End Game → Submit score with user_id
+1. Login page → Home screen → Song selection
+2. Song selection → Start Game → Use user_id for gameplay
+3. End Game → Retry or return to song selection
 4. Shop → Fetch user data → Purchase → Update local state
 5. Leaderboard → Fetch and display
 

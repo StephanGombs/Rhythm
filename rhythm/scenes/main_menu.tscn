@@ -33,10 +33,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = -220.0
-offset_right = 160.0
-offset_bottom = 220.0
+offset_left = -180.0
+offset_top = -180.0
+offset_right = 180.0
+offset_bottom = 180.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 12
@@ -47,35 +47,11 @@ theme_override_font_sizes/font_size = 48
 text = "RHYTHM"
 horizontal_alignment = 1
 
-[node name="UsernameInput" type="LineEdit" parent="VBox" unique_id=1221414704]
-custom_minimum_size = Vector2(320, 40)
-layout_mode = 2
-placeholder_text = "Username"
-
-[node name="PasswordInput" type="LineEdit" parent="VBox" unique_id=801080854]
-custom_minimum_size = Vector2(320, 40)
-layout_mode = 2
-placeholder_text = "Password"
-secret = true
-
 [node name="StatusLabel" type="Label" parent="VBox" unique_id=180630893]
 layout_mode = 2
 horizontal_alignment = 1
+text = "Welcome back"
 autowrap_mode = 3
-
-[node name="HBoxAuth" type="HBoxContainer" parent="VBox" unique_id=726654122]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="LoginButton" type="Button" parent="VBox/HBoxAuth" unique_id=1836724722]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Login"
-
-[node name="RegisterButton" type="Button" parent="VBox/HBoxAuth" unique_id=1831277525]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Register"
 
 [node name="StartButton" type="Button" parent="VBox" unique_id=1473008613]
 layout_mode = 2
@@ -89,13 +65,16 @@ text = "Leaderboard"
 layout_mode = 2
 text = "Shop"
 
+[node name="LogoutButton" type="Button" parent="VBox" unique_id=1780624151]
+layout_mode = 2
+text = "Logout"
+
 [node name="QuitButton" type="Button" parent="VBox" unique_id=246025521]
 layout_mode = 2
 text = "Quit"
 
-[connection signal="pressed" from="VBox/HBoxAuth/LoginButton" to="." method="_on_login_pressed"]
-[connection signal="pressed" from="VBox/HBoxAuth/RegisterButton" to="." method="_on_register_pressed"]
 [connection signal="pressed" from="VBox/StartButton" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="VBox/LeaderboardButton" to="." method="_on_leaderboard_pressed"]
 [connection signal="pressed" from="VBox/ShopButton" to="." method="_on_shop_pressed"]
+[connection signal="pressed" from="VBox/LogoutButton" to="." method="_on_logout_pressed"]
 [connection signal="pressed" from="VBox/QuitButton" to="." method="_on_quit_pressed"]

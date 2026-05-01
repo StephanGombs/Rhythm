@@ -6,6 +6,9 @@
 [ext_resource type="Script" path="res://scripts/game/note_spawner.gd" id="3_spawner"]
 [ext_resource type="Script" path="res://scripts/game/hit_detector.gd" id="4_hitdet"]
 [ext_resource type="PackedScene" uid="uid://pausemenu1" path="res://scenes/pause_menu.tscn" id="5_pause"]
+[ext_resource type="AudioStream" uid="uid://0s1pmcp7bncw" path="res://assets/effects/hurt_sound.mp3" id="6_hurt"]
+[ext_resource type="Texture2D" uid="uid://qsvhp44160hj" path="res://assets/shield_empty.png" id="7_shield_empty"]
+[ext_resource type="Texture2D" uid="uid://uxalcgnag84p" path="res://assets/heart.png" id="9_u5sy4"]
 
 [node name="Game" type="Node2D" unique_id=488596364]
 script = ExtResource("1_game")
@@ -31,8 +34,17 @@ script = ExtResource("3_spawner")
 script = ExtResource("4_hitdet")
 
 [node name="PauseMenu" parent="." unique_id=220944245 instance=ExtResource("5_pause")]
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = 4.0
+offset_top = 16.0
+offset_right = 4.0
+offset_bottom = 16.0
+
+[node name="Sfx" type="Node" parent="." unique_id=182736451]
+
+[node name="HurtSoundPlayer" type="AudioStreamPlayer" parent="Sfx" unique_id=736451826]
+stream = ExtResource("6_hurt")
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="." unique_id=926718341]
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=213483488]
 
@@ -73,3 +85,63 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 36
 horizontal_alignment = 1
+
+[node name="ShieldIndicator" type="TextureRect" parent="HUD" unique_id=126834911]
+offset_left = -22.0
+offset_top = 97.0
+offset_right = 132.0
+offset_bottom = 206.0
+texture = ExtResource("7_shield_empty")
+expand_mode = 2
+
+[node name="CountdownLabel" type="Label" parent="HUD" unique_id=151228441]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -50.0
+offset_right = 120.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 56
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HeartContainer" type="CanvasLayer" parent="HUD" unique_id=1363116673]
+
+[node name="Heart" type="HBoxContainer" parent="HUD/HeartContainer" unique_id=1825686879]
+offset_left = 128.0
+offset_top = 27.0
+offset_right = 271.0
+offset_bottom = 167.0
+
+[node name="TextureRect" type="TextureRect" parent="HUD/HeartContainer/Heart" unique_id=402313144]
+layout_mode = 2
+texture = ExtResource("9_u5sy4")
+expand_mode = 2
+
+[node name="Heart2" type="HBoxContainer" parent="HUD/HeartContainer" unique_id=261649878]
+offset_left = 231.0
+offset_top = 27.0
+offset_right = 371.0
+offset_bottom = 167.0
+
+[node name="TextureRect" type="TextureRect" parent="HUD/HeartContainer/Heart2" unique_id=1085037328]
+layout_mode = 2
+texture = ExtResource("9_u5sy4")
+expand_mode = 2
+
+[node name="Heart3" type="HBoxContainer" parent="HUD/HeartContainer" unique_id=1354363790]
+offset_left = 340.0
+offset_top = 27.0
+offset_right = 480.0
+offset_bottom = 167.0
+
+[node name="TextureRect" type="TextureRect" parent="HUD/HeartContainer/Heart3" unique_id=538808484]
+layout_mode = 2
+texture = ExtResource("9_u5sy4")
+expand_mode = 2

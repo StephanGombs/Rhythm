@@ -1,11 +1,15 @@
 extends Node
 
 const BINDINGS_PATH := "user://keybindings.cfg"
+const DEFAULT_MUSIC_TITLE := "ILYBB"
+const DEFAULT_MUSIC_PATH := "res://assets/music/Ailow, Dionysus - ILYBB [NCS Release].mp3"
 
 var user_id: String = ""
 var username: String = ""
 var account_funds: float = 0.0
 var shields_owned: int = 0
+var selected_music_title: String = DEFAULT_MUSIC_TITLE
+var selected_music_path: String = DEFAULT_MUSIC_PATH
 var is_logged_in: bool = false
 
 
@@ -46,3 +50,10 @@ func logout() -> void:
 func update_from_response(data: Dictionary) -> void:
 	account_funds = data.get("account_funds", account_funds)
 	shields_owned = data.get("shields_owned", shields_owned)
+	account_funds = data.get("new_balance", account_funds)
+	shields_owned = data.get("new_shield_count", shields_owned)
+
+
+func select_music(title: String, path: String) -> void:
+	selected_music_title = title
+	selected_music_path = path

@@ -49,7 +49,9 @@
 ## Phase 5: Integration
 - [x] `api_client.gd` — HTTPRequest wrapper for all backend endpoints
 - [x] `user_session.gd` — global session singleton
-- [x] `main_menu.tscn` — login/register form + navigation buttons
+- [x] `login.tscn` — dedicated login/register screen
+- [x] `main_menu.tscn` — post-login home screen
+- [x] `music_select.tscn` — song selection screen before gameplay
 - [x] Login/register buttons connected to `ApiClient`
 - [x] End-of-game submits score via `ApiClient.submit_score()`
 - [x] Leaderboard scene fetches from `GET /leaderboard`
@@ -59,11 +61,13 @@
 - [x] `shop.gd` — UI logic for viewing funds/shields and buying
 - [x] `shop.tscn` — shop scene with quantity input and buy button
 - [x] Shield purchase wired to `ApiClient.purchase_shields()`
-- [x] Shield consumption in gameplay (miss uses shield or triggers game-over)
+- [x] Shield consumption in gameplay (activation spends one owned shield; miss uses active shield or triggers game-over)
 - [ ] Test economy loop: earn funds → buy shields → use in game
 
 ## Phase 7: Menus & Polish
-- [x] `main_menu.tscn` — login, register, nav buttons
+- [x] `login.tscn` — login/register screen
+- [x] `main_menu.tscn` — post-login home screen
+- [x] `music_select.tscn` — song selection screen
 - [x] `game.tscn` — gameplay with HUD (score/funds/shields/timing feedback)
 - [x] `leaderboard.tscn` — scrollable top-score list
 - [x] `shop.tscn` — funds display and purchase flow
