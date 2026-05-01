@@ -1,6 +1,5 @@
 extends Control
 
-
 func _on_start_pressed() -> void:
 	if not UserSession.is_logged_in:
 		get_tree().change_scene_to_file("res://scenes/login.tscn")

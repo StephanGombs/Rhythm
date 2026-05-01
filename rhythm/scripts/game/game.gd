@@ -18,6 +18,7 @@ const TIMING_DISPLAY_DURATION := 0.6
 const SHIELD_FILLED_TEXTURE := preload("res://assets/shield_filled.png")
 const SHIELD_EMPTY_TEXTURE := preload("res://assets/shield_empty.png")
 const SHIELD_BROKEN_TEXTURE := preload("res://assets/shield_broken.png")
+const WIN_SOUND := preload("res://assets/effects/win_sound.mp3")
 const COUNTDOWN_STEPS := [
 	{"text": "3", "time": 1.0},
 	{"text": "2", "time": 1.0},
@@ -167,6 +168,17 @@ func _on_game_finished(won: bool, final_score: int, total_funds: float) -> void:
 
 	if UserSession.is_logged_in:
 		ApiClient.submit_score(UserSession.user_id, final_score, total_funds)
+
+	# Play win sound when player finishes the song successfully
+	if won:
+		var win_player := AudioStreamPlayer.new()
+		win_player.stream = WIN_SOUND
+		add_child(win_player)
+		win_player.play()
+		# cleanup after a short delay to avoid lingering nodes
+		await get_tree().create_timer(3.0).timeout
+		if is_instance_valid(win_player):
+			win_player.queue_free()
 
 	_show_end_overlay(final_score, total_funds, won)
 
