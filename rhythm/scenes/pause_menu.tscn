@@ -21,10 +21,15 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.05, 0.05, 0.1, 1)
 
-[node name="Sprite2D" type="Sprite2D" parent="Background" unique_id=1102421160]
-position = Vector2(641.5, 359.9999)
-scale = Vector2(0.2344208, 0.19768718)
+[node name="TextureRect" type="TextureRect" parent="Background" unique_id=290456359]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("2_myx47")
+expand_mode = 1
 
 [node name="Overlay" type="ColorRect" parent="." unique_id=1745904873]
 layout_mode = 1

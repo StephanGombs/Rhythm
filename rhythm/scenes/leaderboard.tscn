@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://buulggig741oh" path="res://assets/background.jpg" id="2_wgq7h"]
 
 [node name="Leaderboard" type="Control" unique_id=1936894821]
+clip_contents = true
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,6 +14,7 @@ grow_vertical = 2
 script = ExtResource("1_lb")
 
 [node name="Background" type="ColorRect" parent="." unique_id=2077020771]
+clip_contents = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,10 +23,15 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.05, 0.05, 0.1, 1)
 
-[node name="Sprite2D" type="Sprite2D" parent="Background" unique_id=2071719239]
-position = Vector2(641.5, 359.9999)
-scale = Vector2(0.2344208, 0.19768718)
+[node name="TextureRect" type="TextureRect" parent="Background" unique_id=730204718]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("2_wgq7h")
+expand_mode = 1
 
 [node name="TitleLabel" type="Label" parent="." unique_id=464709256]
 layout_mode = 1
