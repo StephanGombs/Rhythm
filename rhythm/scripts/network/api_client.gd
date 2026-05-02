@@ -1,9 +1,15 @@
 extends Node
 
-const BASE_URL = "http://localhost:8000"
+const BASE_URL_DEV  = "http://127.0.0.1:8000"
+const BASE_URL_PROD = "http://YOUR_VPS_IP:8000"   # replace before VPS test
+var BASE_URL: String
 
 signal request_completed(response_code: int, body: Dictionary)
 signal request_completed_with_context(endpoint: String, response_code: int, body: Dictionary)
+
+
+func _ready() -> void:
+	BASE_URL = BASE_URL_DEV if OS.is_debug_build() else BASE_URL_PROD
 
 
 func _make_request(method: int, endpoint: String, body: Dictionary = {}) -> void:

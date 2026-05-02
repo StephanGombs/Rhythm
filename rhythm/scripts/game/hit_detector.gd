@@ -1,12 +1,17 @@
 extends Node2D
 
-const HIT_RADIUS := 300.0
+# Must match circle_visual.gd RADIUS exactly.
+const HIT_RADIUS      := 80.0
+# Outer ring: note just entered circle — too soon.
+const TOO_SOON_RADIUS := 60.0
+# Inner zone: near center — perfect. Between good and too-soon is good.
+const PERFECT_RADIUS  := 20.0
 
 
 func _process(_delta: float) -> void:
 	if not GameManager.is_playing:
 		return
-	# Auto-miss notes that sat at center past the bad timing window.
+	# Auto-miss notes that sat at center past the allowed window.
 	for node in get_tree().get_nodes_in_group("notes"):
 		var note := node as Note
 		if note == null or note._expired:
@@ -33,24 +38,30 @@ func _input(event: InputEvent) -> void:
 func _try_hit(direction: int) -> void:
 	var center := get_viewport_rect().size / 2
 	var best: Note = null
-	var best_dist := HIT_RADIUS + 1.0
+	var best_dist := INF
 
 	for node in get_tree().get_nodes_in_group("notes"):
 		var note := node as Note
 		if note == null or note._expired or note.direction != direction:
 			continue
 		var dist := note.global_position.distance_to(center)
-		if dist < best_dist:
+		# Only consider notes that are inside the visible circle.
+		if dist < HIT_RADIUS and dist < best_dist:
 			best_dist = dist
 			best = note
 
 	if best == null:
-		return  # No note of this direction nearby — no penalty.
-
-	var offset := best.get_timing_offset_ms()
-	if abs(offset) > GameManager.BAD_WINDOW_MS:
-		return  # Note approaching but outside timing window — ignore press.
+		return  # Nothing inside the circle for this direction — no penalty.
 
 	best._expired = true
-	GameManager.register_hit(float(offset))
+
+	var timing: String
+	if best_dist >= TOO_SOON_RADIUS:
+		timing = "Too Soon"
+	elif best_dist >= PERFECT_RADIUS:
+		timing = "Good"
+	else:
+		timing = "Perfect"
+
+	GameManager.register_hit(timing)
 	best.queue_free()

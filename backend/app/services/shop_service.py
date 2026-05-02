@@ -1,6 +1,6 @@
 import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, update
 from ..models.user import User
 from ..models.purchase import Purchase
 from ..schemas.shop import ShopItem, PurchaseRequest, PurchaseResponse
@@ -24,22 +24,33 @@ class ShopService:
         if data.quantity <= 0:
             raise InvalidQuantityError("Quantity must be at least 1")
 
-        result = await self.db.execute(select(User).where(User.id == data.user_id))
-        user = result.scalar_one_or_none()
-        if not user:
-            raise UserNotFoundError(f"User '{data.user_id}' not found")
-
         item = next((i for i in SHOP_ITEMS if i.item_type == data.item_type), None)
         if not item:
             raise ValueError(f"Unknown item type: {data.item_type}")
 
         total_cost = item.price * data.quantity
-        current_funds = float(user.account_funds)
-        if current_funds < total_cost:
-            raise InsufficientFundsError(needed=total_cost, available=current_funds)
 
-        user.account_funds = current_funds - total_cost
-        user.shields_owned = user.shields_owned + data.quantity
+        # Single conditional UPDATE — no SELECT needed on the happy path
+        result = await self.db.execute(
+            update(User)
+            .where(User.id == data.user_id, User.account_funds >= total_cost)
+            .values(
+                account_funds=User.account_funds - total_cost,
+                shields_owned=User.shields_owned + data.quantity,
+            )
+            .returning(User)
+        )
+        user = result.scalar_one_or_none()
+
+        if not user:
+            # Determine whether user doesn't exist or funds are insufficient
+            check = await self.db.execute(
+                select(User.account_funds).where(User.id == data.user_id)
+            )
+            funds = check.scalar_one_or_none()
+            if funds is None:
+                raise UserNotFoundError(f"User '{data.user_id}' not found")
+            raise InsufficientFundsError(needed=total_cost, available=float(funds))
 
         purchase = Purchase(
             id=str(uuid.uuid4()),

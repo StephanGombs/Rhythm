@@ -71,8 +71,11 @@ func _request_shield_activation() -> void:
 		return
 	if GameManager.shield_active:
 		return
+	if GameManager.shield_used_this_game:
+		timing_label.text = "Shield used"
+		_timing_timer = 0.8
+		return
 	if GameManager.shields <= 0:
-		# show a brief feedback when no shields available
 		timing_label.text = "No shields"
 		_timing_timer = 0.8
 		return
@@ -201,10 +204,11 @@ func _on_note_hit(timing: String) -> void:
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(timing_label, "scale", Vector2.ONE, 0.22)
 	match timing:
-		"Perfect": timing_label.modulate = Color.GOLD
-		"Good":    timing_label.modulate = Color.GREEN
-		"Bad":     timing_label.modulate = Color.ORANGE_RED
-		"Miss":    timing_label.modulate = Color.RED
+		"Perfect":  timing_label.modulate = Color.GOLD
+		"Good":     timing_label.modulate = Color.GREEN
+		"Too Soon": timing_label.modulate = Color.ORANGE_RED
+		"Miss":     timing_label.modulate = Color.RED
+		"Blocked":  timing_label.modulate = Color.CYAN
 
 
 func _on_game_finished(won: bool, final_score: int, total_funds: float) -> void:
@@ -215,6 +219,7 @@ func _on_game_finished(won: bool, final_score: int, total_funds: float) -> void:
 		note.queue_free()
 
 	if UserSession.is_logged_in:
+		UserSession.account_funds += total_funds
 		ApiClient.submit_score(UserSession.user_id, final_score, total_funds)
 
 	# Play win sound when player finishes the song successfully

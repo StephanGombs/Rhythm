@@ -7,6 +7,7 @@ const UIPolishScript = preload("res://scripts/ui/ui_polish.gd")
 @onready var status_label: Label = $VBox/StatusLabel
 @onready var login_button: Button = $VBox/HBoxAuth/LoginButton
 @onready var register_button: Button = $VBox/HBoxAuth/RegisterButton
+@onready var quit_button: Button = $VBox/QuitButton
 
 var _pending_action: String = ""
 
@@ -16,7 +17,7 @@ func _ready() -> void:
 	UIPolishScript.add_soft_panel_behind($VBox)
 	UIPolishScript.style_title($VBox/TitleLabel, 52)
 	UIPolishScript.style_status_label(status_label)
-	UIPolishScript.style_buttons([login_button, register_button])
+	UIPolishScript.style_buttons([login_button, register_button, quit_button])
 	UIPolishScript.animate_scene_in(self)
 	username_input.grab_focus()
 	ApiClient.request_completed.connect(_on_api_response)
@@ -89,6 +90,10 @@ func _on_api_response(response_code: int, body: Dictionary) -> void:
 func _set_status(message: String, success: bool) -> void:
 	status_label.text = message
 	status_label.modulate = Color(0.4, 1.0, 0.4) if success else Color(1.0, 0.4, 0.4)
+
+
+func _on_quit_pressed() -> void:
+	get_tree().quit()
 
 
 func _set_auth_buttons(enabled: bool) -> void:

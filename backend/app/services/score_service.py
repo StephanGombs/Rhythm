@@ -1,7 +1,6 @@
 import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc
-from sqlalchemy.orm import joinedload
+from sqlalchemy import select, update, desc
 from ..models.score import Score
 from ..models.user import User
 from ..schemas.score import ScoreCreate, LeaderboardEntry
@@ -13,9 +12,14 @@ class ScoreService:
         self.db = db
 
     async def submit_score(self, data: ScoreCreate) -> Score:
-        result = await self.db.execute(select(User).where(User.id == data.user_id))
-        user = result.scalar_one_or_none()
-        if not user:
+        # Update funds and verify user exists in one query
+        funds_result = await self.db.execute(
+            update(User)
+            .where(User.id == data.user_id)
+            .values(account_funds=User.account_funds + data.funds_earned)
+            .returning(User.id)
+        )
+        if not funds_result.scalar_one_or_none():
             raise UserNotFoundError(f"User '{data.user_id}' not found")
 
         score = Score(
@@ -24,7 +28,6 @@ class ScoreService:
             score=data.score,
         )
         self.db.add(score)
-        user.account_funds = float(user.account_funds) + data.funds_earned
         await self.db.flush()
         return score
 
