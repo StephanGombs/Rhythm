@@ -20,7 +20,7 @@ class ScoreService:
             .returning(User.id)
         )
         if not funds_result.scalar_one_or_none():
-            raise UserNotFoundError(f"User '{data.user_id}' not found")
+            raise UserNotFoundError(f"Utilisateur '{data.user_id}' introuvable")
 
         score = Score(
             id=str(uuid.uuid4()),

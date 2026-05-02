@@ -57,11 +57,11 @@ func _try_hit(direction: int) -> void:
 
 	var timing: String
 	if best_dist >= TOO_SOON_RADIUS:
-		timing = "Too Soon"
+		timing = "Trop tôt"
 	elif best_dist >= PERFECT_RADIUS:
-		timing = "Good"
+		timing = "Bien"
 	else:
-		timing = "Perfect"
+		timing = "Parfait"
 
 	GameManager.register_hit(timing)
 	best.queue_free()

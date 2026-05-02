@@ -55,12 +55,12 @@ horizontal_alignment = 1
 [node name="UsernameInput" type="LineEdit" parent="VBox" unique_id=1041059688]
 custom_minimum_size = Vector2(320, 40)
 layout_mode = 2
-placeholder_text = "Username"
+placeholder_text = "Nom d'utilisateur"
 
 [node name="PasswordInput" type="LineEdit" parent="VBox" unique_id=312890682]
 custom_minimum_size = Vector2(320, 40)
 layout_mode = 2
-placeholder_text = "Password"
+placeholder_text = "Mot de passe"
 secret = true
 
 [node name="StatusLabel" type="Label" parent="VBox" unique_id=246271979]
@@ -75,16 +75,16 @@ theme_override_constants/separation = 8
 [node name="LoginButton" type="Button" parent="VBox/HBoxAuth" unique_id=2137103213]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Login"
+text = "Connexion"
 
 [node name="RegisterButton" type="Button" parent="VBox/HBoxAuth" unique_id=1732174382]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Register"
+text = "S'inscrire"
 
 [node name="QuitButton" type="Button" parent="VBox" unique_id=1234567890]
 layout_mode = 2
-text = "Quit"
+text = "Quitter"
 
 [connection signal="pressed" from="VBox/HBoxAuth/LoginButton" to="." method="_on_login_pressed"]
 [connection signal="pressed" from="VBox/HBoxAuth/RegisterButton" to="." method="_on_register_pressed"]

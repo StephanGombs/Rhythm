@@ -49,7 +49,7 @@ theme_override_constants/separation = 12
 [node name="TitleLabel" type="Label" parent="VBox" unique_id=1683854564]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "SELECT MUSIC"
+text = "SÉLECTION DE MUSIQUE"
 horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="VBox" unique_id=1581201785]
@@ -79,9 +79,9 @@ theme_override_constants/separation = 12
 [node name="StartButton" type="Button" parent="VBox/Actions" unique_id=118586148]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Start Game"
+text = "Jouer"
 
 [node name="BackButton" type="Button" parent="VBox/Actions" unique_id=364347903]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Back"
+text = "Retour"

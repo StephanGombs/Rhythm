@@ -23,7 +23,7 @@ const COUNTDOWN_STEPS := [
 	{"text": "3", "time": 1.0},
 	{"text": "2", "time": 1.0},
 	{"text": "1", "time": 1.0},
-	{"text": "GO!", "time": 0.5},
+	{"text": "PARTEZ !", "time": 0.5},
 ]
 
 var _timing_timer: float   = 0.0
@@ -72,11 +72,11 @@ func _request_shield_activation() -> void:
 	if GameManager.shield_active:
 		return
 	if GameManager.shield_used_this_game:
-		timing_label.text = "Shield used"
+		timing_label.text = "Bouclier utilisé"
 		_timing_timer = 0.8
 		return
 	if GameManager.shields <= 0:
-		timing_label.text = "No shields"
+		timing_label.text = "Pas de bouclier"
 		_timing_timer = 0.8
 		return
 	if not UserSession.is_logged_in:
@@ -91,9 +91,9 @@ func _request_shield_activation() -> void:
 
 
 func _refresh_hud() -> void:
-	score_label.text   = "Score: 0"
-	funds_label.text   = "Funds: 0.0"
-	shields_label.text = "Shields: %d" % GameManager.shields
+	score_label.text   = "Score : 0"
+	funds_label.text   = "Fonds : 0.0"
+	shields_label.text = "Boucliers : %d" % GameManager.shields
 	_update_hearts(GameManager.hearts, false)
 	_set_shield_visual("empty")
 	countdown_label.hide()
@@ -118,15 +118,15 @@ func _style_hud() -> void:
 
 
 func _on_score_updated(new_score: int) -> void:
-	score_label.text = "Score: %d" % new_score
+	score_label.text = "Score : %d" % new_score
 
 
 func _on_funds_updated(new_funds: float) -> void:
-	funds_label.text = "Funds: %.1f" % new_funds
+	funds_label.text = "Fonds : %.1f" % new_funds
 
 
 func _on_shields_updated(count: int) -> void:
-	shields_label.text = "Shields: %d" % count
+	shields_label.text = "Boucliers : %d" % count
 
 
 func _on_hearts_updated(count: int) -> void:
@@ -175,14 +175,14 @@ func _load_selected_music() -> void:
 	if stream is AudioStream:
 		music_player.stream = stream
 	else:
-		push_warning("Unable to load selected music: %s" % music_path)
+		push_warning("Impossible de charger la musique sélectionnée : %s" % music_path)
 
 
 func _start_countdown() -> void:
 	countdown_label.show()
 	for step in COUNTDOWN_STEPS:
 		countdown_label.text = step["text"]
-		countdown_label.modulate = Color.WHITE if step["text"] != "GO!" else Color(0.8, 1.0, 0.4)
+		countdown_label.modulate = Color.WHITE if step["text"] != "PARTEZ !" else Color(0.8, 1.0, 0.4)
 		await get_tree().create_timer(step["time"]).timeout
 	countdown_label.hide()
 	GameManager.begin_play()
@@ -204,11 +204,11 @@ func _on_note_hit(timing: String) -> void:
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(timing_label, "scale", Vector2.ONE, 0.22)
 	match timing:
-		"Perfect":  timing_label.modulate = Color.GOLD
-		"Good":     timing_label.modulate = Color.GREEN
-		"Too Soon": timing_label.modulate = Color.ORANGE_RED
-		"Miss":     timing_label.modulate = Color.RED
-		"Blocked":  timing_label.modulate = Color.CYAN
+		"Parfait":   timing_label.modulate = Color.GOLD
+		"Bien":      timing_label.modulate = Color.GREEN
+		"Trop tôt":  timing_label.modulate = Color.ORANGE_RED
+		"Raté":      timing_label.modulate = Color.RED
+		"Bloqué":    timing_label.modulate = Color.CYAN
 
 
 func _on_game_finished(won: bool, final_score: int, total_funds: float) -> void:
@@ -247,7 +247,7 @@ func _on_api_response(endpoint: String, response_code: int, body: Dictionary) ->
 	if response_code != 200:
 		push_warning(body.get("detail", "Failed to consume shield."))
 		# brief UI feedback
-		timing_label.text = body.get("detail", "Shield failed")
+		timing_label.text = body.get("detail", "Échec du bouclier")
 		_timing_timer = 1.2
 		return
 
@@ -256,7 +256,7 @@ func _on_api_response(endpoint: String, response_code: int, body: Dictionary) ->
 	print("[Shield] Server confirmed new_shields=%d" % UserSession.shields_owned)
 	GameManager.activate_shield_from_server(UserSession.shields_owned)
 	# visual confirmation
-	timing_label.text = "Shield Activated"
+	timing_label.text = "Bouclier activé"
 	_timing_timer = 0.9
 
 
@@ -302,20 +302,20 @@ func _show_end_overlay(score: int, funds: float, won: bool) -> void:
 	panel.add_child(vbox)
 
 	var title := Label.new()
-	title.text                 = "SONG COMPLETE" if won else "GAME OVER"
+	title.text                 = "CHANSON TERMINÉE" if won else "PARTIE TERMINÉE"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 42)
 	title.modulate = Color.GREEN if won else Color.RED
 	vbox.add_child(title)
 
 	var score_lbl := Label.new()
-	score_lbl.text                 = "Score: %d" % score
+	score_lbl.text                 = "Score : %d" % score
 	score_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	score_lbl.add_theme_font_size_override("font_size", 28)
 	vbox.add_child(score_lbl)
 
 	var funds_lbl := Label.new()
-	funds_lbl.text                 = "Funds Earned: %d" % int(funds)
+	funds_lbl.text                 = "Fonds gagnés : %d" % int(funds)
 	funds_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	funds_lbl.add_theme_font_size_override("font_size", 20)
 	vbox.add_child(funds_lbl)
@@ -330,7 +330,7 @@ func _show_end_overlay(score: int, funds: float, won: bool) -> void:
 	vbox.add_child(buttons_row)
 
 	var retry_button := Button.new()
-	retry_button.text = "Retry"
+	retry_button.text = "Réessayer"
 	retry_button.custom_minimum_size = Vector2(120, 44)
 	retry_button.pressed.connect(func() -> void:
 		get_tree().change_scene_to_file("res://scenes/game.tscn")
@@ -338,7 +338,7 @@ func _show_end_overlay(score: int, funds: float, won: bool) -> void:
 	buttons_row.add_child(retry_button)
 
 	var continue_button := Button.new()
-	continue_button.text = "Continue"
+	continue_button.text = "Continuer"
 	continue_button.custom_minimum_size = Vector2(120, 44)
 	continue_button.pressed.connect(func() -> void:
 		get_tree().change_scene_to_file("res://scenes/music_select.tscn")

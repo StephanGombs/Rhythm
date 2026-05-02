@@ -1,89 +1,89 @@
-# VPS Deployment Guide
+# Guide de déploiement VPS
 
-How to move the Rhythm game backend from your local machine to a VPS so players can connect to it.
+Comment déplacer le backend du jeu Rythme de votre machine locale vers un VPS afin que les joueurs puissent s'y connecter.
 
 ---
 
-## What changes between local and VPS
+## Ce qui change entre le développement local et le VPS
 
-| Thing | Local dev | VPS |
+| Élément | Dev local | VPS |
 |---|---|---|
-| Backend URL in Godot | `http://127.0.0.1:8000` | `http://<YOUR_VPS_IP>:8000` |
-| Database host in `.env` | `localhost:5433` | `postgres:5432` (Docker internal) |
-| `DEBUG` in `.env` | `True` | `False` |
-| `SECRET_KEY` in `.env` | placeholder | strong random key |
-| Godot build | debug (editor) | exported release build |
+| URL du backend dans Godot | `http://127.0.0.1:8000` | `http://<VOTRE_IP_VPS>:8000` |
+| Hôte de la base de données dans `.env` | `localhost:5433` | `postgres:5432` (interne Docker) |
+| `DEBUG` dans `.env` | `True` | `False` |
+| `SECRET_KEY` dans `.env` | valeur temporaire | clé aléatoire forte |
+| Build Godot | debug (éditeur) | build release exporté |
 
 ---
 
-## 1. Prepare the VPS
+## 1. Préparer le VPS
 
-You need a Linux VPS (Ubuntu 22.04 recommended). Run these once after getting SSH access:
+Il vous faut un VPS Linux (Ubuntu 22.04 recommandé). Exécutez ces commandes une seule fois après avoir obtenu l'accès SSH :
 
 ```bash
-# Update the system
+# Mettre à jour le système
 sudo apt update && sudo apt upgrade -y
 
-# Install Docker
+# Installer Docker
 curl -fsSL https://get.docker.com | sh
 sudo usermod -aG docker $USER
 newgrp docker
 
-# Install Docker Compose plugin (if not bundled)
+# Installer le plugin Docker Compose (si non inclus)
 sudo apt install -y docker-compose-plugin
 
-# Verify
+# Vérifier
 docker --version
 docker compose version
 ```
 
 ---
 
-## 2. Open the firewall
+## 2. Ouvrir le pare-feu
 
-Port 8000 must be reachable from the internet so Godot clients can connect.
+Le port 8000 doit être accessible depuis Internet pour que les clients Godot puissent se connecter.
 
 ```bash
-sudo ufw allow 22      # SSH — keep this or you'll lock yourself out
-sudo ufw allow 8000    # Backend API
+sudo ufw allow 22      # SSH — ne pas supprimer pour éviter de se bloquer
+sudo ufw allow 8000    # API backend
 sudo ufw enable
 ```
 
-> Port 5432 (PostgreSQL) does **not** need to be opened — it stays internal to Docker.
+> Le port 5432 (PostgreSQL) **n'a pas** besoin d'être ouvert — il reste interne à Docker.
 
 ---
 
-## 3. Upload the project
+## 3. Uploader le projet
 
-From your local machine, copy the project to the VPS:
+Depuis votre machine locale, copiez le projet sur le VPS :
 
 ```bash
-# Replace user@YOUR_VPS_IP and the path as needed
-scp -r "c:/Users/steph/OneDrive/Desktop/My personnal projects/Rhythm" user@YOUR_VPS_IP:~/rhythm
+# Remplacez user@VOTRE_IP_VPS et le chemin selon vos besoins
+scp -r "c:/Users/steph/OneDrive/Desktop/My personnal projects/Rhythm" user@VOTRE_IP_VPS:~/rhythm
 ```
 
-Or use Git if the project is in a repo:
+Ou utilisez Git si le projet est dans un dépôt :
 
 ```bash
-git clone <your-repo-url> ~/rhythm
+git clone <url-de-votre-depot> ~/rhythm
 ```
 
 ---
 
-## 4. Configure the environment
+## 4. Configurer l'environnement
 
-SSH into the VPS, then edit `backend/.env`:
+Connectez-vous en SSH au VPS, puis modifiez `backend/.env` :
 
 ```bash
 cd ~/rhythm
 nano backend/.env
 ```
 
-Set it to:
+Contenu à définir :
 
 ```env
-DATABASE_URL=postgresql+asyncpg://prod_user:CHANGE_THIS_PASSWORD@postgres:5432/rhythm_prod
-SECRET_KEY=GENERATE_THIS_WITH_COMMAND_BELOW
+DATABASE_URL=postgresql+asyncpg://prod_user:CHANGEZ_CE_MOT_DE_PASSE@postgres:5432/rhythm_prod
+SECRET_KEY=GÉNÉREZ_AVEC_LA_COMMANDE_CI-DESSOUS
 DEBUG=False
 SHIELD_PRICE=100
 PERFECT_HIT_FUNDS=15
@@ -91,19 +91,19 @@ GOOD_HIT_FUNDS=10
 BAD_HIT_FUNDS=5
 ```
 
-Generate a strong SECRET_KEY:
+Générer une clé SECRET_KEY forte :
 
 ```bash
 openssl rand -hex 32
 ```
 
-Copy the output and paste it as the value of `SECRET_KEY`.
+Copiez la sortie et collez-la comme valeur de `SECRET_KEY`.
 
 ---
 
-## 5. Update docker-compose.yml for production
+## 5. Mettre à jour docker-compose.yml pour la production
 
-The `docker-compose.yml` at the project root uses dev credentials. Update the `postgres` service to match the credentials you put in `.env`:
+Le fichier `docker-compose.yml` à la racine du projet utilise des identifiants de développement. Mettez à jour le service `postgres` pour correspondre aux identifiants de votre `.env` :
 
 ```yaml
 services:
@@ -112,7 +112,7 @@ services:
     container_name: rhythm_postgres
     environment:
       POSTGRES_USER: prod_user
-      POSTGRES_PASSWORD: CHANGE_THIS_PASSWORD
+      POSTGRES_PASSWORD: CHANGEZ_CE_MOT_DE_PASSE
       POSTGRES_DB: rhythm_prod
     volumes:
       - rhythm_pg_data:/var/lib/postgresql/data
@@ -144,55 +144,55 @@ networks:
     driver: bridge
 ```
 
-> The `nginx` service is not needed for a basic VPS test — remove it or leave it commented out.
+> Le service `nginx` n'est pas nécessaire pour un test VPS de base — supprimez-le ou laissez-le commenté.
 
 ---
 
-## 6. Start the backend
+## 6. Démarrer le backend
 
 ```bash
 cd ~/rhythm
 docker compose up -d --build
 ```
 
-Check it started correctly:
+Vérifiez que tout a bien démarré :
 
 ```bash
 docker compose logs -f backend
 ```
 
-You should see:
+Vous devriez voir :
 ```
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000
 ```
 
-Test it from your local machine:
+Testez depuis votre machine locale :
 
 ```bash
-curl http://YOUR_VPS_IP:8000/health
-# Expected: {"status":"ok"}
+curl http://VOTRE_IP_VPS:8000/health
+# Attendu : {"status":"ok"}
 ```
 
 ---
 
-## 7. Update the Godot client
+## 7. Mettre à jour le client Godot
 
-In `rhythm/scripts/network/api_client.gd`, replace `YOUR_VPS_IP` with the actual IP:
+Dans `rhythm/scripts/network/api_client.gd`, remplacez `YOUR_VPS_IP` par l'adresse IP réelle :
 
 ```gdscript
 const BASE_URL_DEV  = "http://127.0.0.1:8000"
-const BASE_URL_PROD = "http://YOUR_VPS_IP:8000"   # ← put the real IP here
+const BASE_URL_PROD = "http://VOTRE_IP_VPS:8000"   # ← mettez la vraie IP ici
 const BASE_URL = BASE_URL_DEV if OS.is_debug_build() else BASE_URL_PROD
 ```
 
-When you export the game in Godot (**Project → Export → Release**), it will automatically use `BASE_URL_PROD`. Running from the Godot editor still hits your local backend.
+Lorsque vous exportez le jeu dans Godot (**Projet → Exporter → Release**), il utilisera automatiquement `BASE_URL_PROD`. Depuis l'éditeur Godot, c'est toujours le backend local qui est utilisé.
 
 ---
 
-## 8. Keeping the backend running after logout
+## 8. Maintenir le backend actif après déconnexion
 
-By default `docker compose up -d` keeps containers running. To also survive a VPS reboot, add a restart policy to the compose file:
+Par défaut, `docker compose up -d` maintient les conteneurs en cours d'exécution. Pour survivre également à un redémarrage du VPS, ajoutez une politique de redémarrage dans le fichier compose :
 
 ```yaml
   backend:
@@ -202,45 +202,45 @@ By default `docker compose up -d` keeps containers running. To also survive a VP
     restart: unless-stopped
 ```
 
-Then run `docker compose up -d` again to apply.
+Puis relancez `docker compose up -d` pour appliquer.
 
 ---
 
-## Quick command reference
+## Référence des commandes rapides
 
 ```bash
-# Start
+# Démarrer
 docker compose up -d --build
 
-# Stop
+# Arrêter
 docker compose down
 
-# View logs
+# Voir les logs
 docker compose logs -f backend
 
-# Restart backend only (after a code change)
+# Redémarrer uniquement le backend (après un changement de code)
 docker compose up -d --build backend
 
-# Check running containers
+# Vérifier les conteneurs en cours d'exécution
 docker compose ps
 ```
 
 ---
 
-## Troubleshooting
+## Dépannage
 
-**Godot gets no response / times out**
-- Check `sudo ufw status` — port 8000 must show ALLOW
-- Run `curl http://YOUR_VPS_IP:8000/health` from another machine to confirm the API is up
-- Check `docker compose logs backend` for errors
+**Godot ne reçoit pas de réponse / délai d'attente**
+- Vérifiez `sudo ufw status` — le port 8000 doit afficher ALLOW
+- Exécutez `curl http://VOTRE_IP_VPS:8000/health` depuis une autre machine pour confirmer que l'API est active
+- Vérifiez `docker compose logs backend` pour les erreurs
 
-**Database connection refused**
-- Make sure the `DATABASE_URL` in `.env` uses `postgres` (the Docker service name) as the host, not `localhost`
-- Check `docker compose ps` — the `postgres` container must be healthy before the backend starts
+**Connexion à la base de données refusée**
+- Assurez-vous que `DATABASE_URL` dans `.env` utilise `postgres` (le nom du service Docker) comme hôte, et non `localhost`
+- Vérifiez `docker compose ps` — le conteneur `postgres` doit être en bonne santé avant le démarrage du backend
 
-**Migrations failed on startup**
-- Run manually: `docker compose exec backend alembic upgrade head`
-- Check logs: `docker compose logs backend`
+**Les migrations ont échoué au démarrage**
+- Lancez manuellement : `docker compose exec backend alembic upgrade head`
+- Consultez les logs : `docker compose logs backend`
 
-**Wrong password / auth errors after deploy**
-- Passwords hashed locally won't work against a fresh production DB — users need to re-register
+**Mauvais mot de passe / erreurs d'authentification après déploiement**
+- Les mots de passe hachés localement ne fonctionneront pas avec une base de données de production vierge — les utilisateurs devront se réinscrire

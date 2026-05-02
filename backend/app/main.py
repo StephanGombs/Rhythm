@@ -13,7 +13,7 @@ from .utils.exceptions import (
     InsufficientShieldsError,
 )
 
-app = FastAPI(title="Rhythm Game API", debug=settings.debug)
+app = FastAPI(title="API Jeu Rythme", debug=settings.debug)
 
 app.add_middleware(
     CORSMiddleware,

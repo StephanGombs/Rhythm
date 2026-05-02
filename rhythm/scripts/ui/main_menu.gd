@@ -15,7 +15,7 @@ func _ready() -> void:
 		$VBox/LogoutButton,
 		$VBox/QuitButton,
 	])
-	$VBox/StatusLabel.text = "Welcome, %s" % (UserSession.username if UserSession.is_logged_in else "Guest")
+	$VBox/StatusLabel.text = "Bienvenue, %s" % (UserSession.username if UserSession.is_logged_in else "Invité")
 	UIPolishScript.animate_scene_in(self)
 
 func _on_start_pressed() -> void:

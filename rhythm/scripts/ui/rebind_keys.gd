@@ -10,10 +10,10 @@ const DEFAULT_KEYS := {
 }
 
 const DIR_LABELS := {
-	"move_up":    "Up",
-	"move_down":  "Down",
-	"move_left":  "Left",
-	"move_right": "Right",
+	"move_up":    "Haut",
+	"move_down":  "Bas",
+	"move_left":  "Gauche",
+	"move_right": "Droite",
 }
 
 var _waiting_for: String = ""
@@ -48,7 +48,7 @@ func _build_ui() -> void:
 	panel.add_child(vbox)
 
 	var title := Label.new()
-	title.text = "REBIND KEYS"
+	title.text = "RECONFIGURER LES TOUCHES"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 26)
 	vbox.add_child(title)
@@ -74,7 +74,7 @@ func _build_ui() -> void:
 		grid.add_child(key_lbl)
 
 		var btn := Button.new()
-		btn.text = "Change"
+		btn.text = "Modifier"
 		btn.custom_minimum_size = Vector2(80, 32)
 		btn.pressed.connect(_on_change_pressed.bind(action))
 		_change_btns[action] = btn
@@ -83,12 +83,12 @@ func _build_ui() -> void:
 	vbox.add_child(HSeparator.new())
 
 	var reset_btn := Button.new()
-	reset_btn.text = "Reset to Defaults"
+	reset_btn.text = "Réinitialiser"
 	reset_btn.pressed.connect(_on_reset_pressed)
 	vbox.add_child(reset_btn)
 
 	var back_btn := Button.new()
-	back_btn.text = "Back"
+	back_btn.text = "Retour"
 	back_btn.pressed.connect(_on_back_pressed)
 	vbox.add_child(back_btn)
 
@@ -120,7 +120,7 @@ func _input(event: InputEvent) -> void:
 
 func _on_change_pressed(action: String) -> void:
 	_waiting_for = action
-	_key_labels[action].text = "Press any key…"
+	_key_labels[action].text = "Appuyez sur une touche…"
 	_set_btns_disabled(true)
 
 

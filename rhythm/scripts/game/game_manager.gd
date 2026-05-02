@@ -94,17 +94,17 @@ func activate_shield_from_server(new_shield_count: int) -> bool:
 
 func register_hit(timing: String) -> void:
 	match timing:
-		"Perfect":
+		"Parfait":
 			current_score += 100
 			funds_earned  += 15.0
 			combo         += 1
 			perfect_hits  += 1
-		"Good":
+		"Bien":
 			current_score += 50
 			funds_earned  += 10.0
 			combo         += 1
 			good_hits     += 1
-		"Too Soon":
+		"Trop tôt":
 			current_score += 10
 			funds_earned  += 5.0
 			combo          = 0
@@ -124,11 +124,11 @@ func register_miss() -> void:
 		shield_active = false
 		shield_broken = true
 		emit_signal("shield_state_updated", "broken")
-		emit_signal("note_hit", "Blocked")
+		emit_signal("note_hit", "Bloqué")
 		return
 
 	misses += 1
-	emit_signal("note_hit", "Miss")
+	emit_signal("note_hit", "Raté")
 	hearts -= 1
 	emit_signal("hearts_updated", hearts)
 	if hearts <= 0:

@@ -58,24 +58,24 @@ theme_override_constants/separation = 12
 [node name="PausedLabel" type="Label" parent="VBox" unique_id=1455064123]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "PAUSED"
+text = "PAUSE"
 horizontal_alignment = 1
 
 [node name="ResumeButton" type="Button" parent="VBox" unique_id=1463860350]
 layout_mode = 2
-text = "Resume"
+text = "Reprendre"
 
 [node name="RestartButton" type="Button" parent="VBox" unique_id=473467431]
 layout_mode = 2
-text = "Restart"
+text = "Recommencer"
 
 [node name="MainMenuButton" type="Button" parent="VBox" unique_id=233673313]
 layout_mode = 2
-text = "Main Menu"
+text = "Menu principal"
 
 [node name="QuitButton" type="Button" parent="VBox" unique_id=1260620338]
 layout_mode = 2
-text = "Quit"
+text = "Quitter"
 
 [connection signal="pressed" from="VBox/ResumeButton" to="." method="_on_resume_pressed"]
 [connection signal="pressed" from="VBox/RestartButton" to="." method="_on_restart_pressed"]

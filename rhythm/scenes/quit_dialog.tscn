@@ -49,16 +49,16 @@ theme_override_constants/separation = 16
 [node name="ConfirmLabel" type="Label" parent="VBox" unique_id=508595864]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Quit the game?"
+text = "Quitter le jeu ?"
 horizontal_alignment = 1
 
 [node name="YesButton" type="Button" parent="VBox" unique_id=1346169453]
 layout_mode = 2
-text = "Yes, Quit"
+text = "Oui, quitter"
 
 [node name="NoButton" type="Button" parent="VBox" unique_id=1845445066]
 layout_mode = 2
-text = "Cancel"
+text = "Annuler"
 
 [connection signal="pressed" from="VBox/YesButton" to="." method="_on_yes_pressed"]
 [connection signal="pressed" from="VBox/NoButton" to="." method="_on_no_pressed"]

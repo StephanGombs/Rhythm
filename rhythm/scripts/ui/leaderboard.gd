@@ -15,7 +15,7 @@ func _ready() -> void:
 	UIPolishScript.animate_scene_in(self)
 	ApiClient.request_completed.connect(_on_api_response)
 	ApiClient.get_leaderboard(10)
-	status_label.text = "Loading..."
+	status_label.text = "Chargement..."
 
 
 func _on_back_pressed() -> void:
@@ -26,7 +26,7 @@ func _on_api_response(response_code: int, body: Variant) -> void:
 	status_label.hide()
 	if response_code != 200:
 		status_label.show()
-		status_label.text = "Failed to load leaderboard."
+		status_label.text = "Impossible de charger le classement."
 		return
 
 	for child in entries_container.get_children():

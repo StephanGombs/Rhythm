@@ -27,9 +27,9 @@ func _on_login_pressed() -> void:
 	var user := username_input.text.strip_edges()
 	var pass_ := password_input.text
 	if user.is_empty() or pass_.is_empty():
-		_set_status("Please enter a username and password.", false)
+		_set_status("Veuillez saisir un nom d'utilisateur et un mot de passe.", false)
 		return
-	_set_status("Logging in...", true)
+	_set_status("Connexion en cours...", true)
 	_set_auth_buttons(false)
 	_pending_action = "login"
 	ApiClient.login(user, pass_)
@@ -39,9 +39,9 @@ func _on_register_pressed() -> void:
 	var user := username_input.text.strip_edges()
 	var pass_ := password_input.text
 	if user.is_empty() or pass_.is_empty():
-		_set_status("Please enter a username and password.", false)
+		_set_status("Veuillez saisir un nom d'utilisateur et un mot de passe.", false)
 		return
-	_set_status("Creating account...", true)
+	_set_status("Création du compte...", true)
 	_set_auth_buttons(false)
 	_pending_action = "register"
 	ApiClient.register(user, pass_)
@@ -51,7 +51,7 @@ func _on_api_response(response_code: int, body: Dictionary) -> void:
 	_set_auth_buttons(true)
 
 	if response_code == 0:
-		_set_status("Cannot reach the server. Is it running?", false)
+		_set_status("Impossible d'atteindre le serveur. Est-il démarré ?", false)
 		_pending_action = ""
 		return
 
@@ -63,13 +63,13 @@ func _on_api_response(response_code: int, body: Dictionary) -> void:
 					get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 					password_input.text = ""
 				401:
-					_set_status("Incorrect username or password.", false)
+					_set_status("Nom d'utilisateur ou mot de passe incorrect.", false)
 				404:
-					_set_status("No account found with that username.", false)
+					_set_status("Aucun compte trouvé avec ce nom d'utilisateur.", false)
 				422:
-					_set_status("Please enter a valid username and password.", false)
+					_set_status("Veuillez saisir un nom d'utilisateur et un mot de passe valides.", false)
 				_:
-					_set_status(body.get("detail", "Login failed (error %d)." % response_code), false)
+					_set_status(body.get("detail", "Échec de la connexion (erreur %d)." % response_code), false)
 
 		"register":
 			match response_code:
@@ -78,11 +78,11 @@ func _on_api_response(response_code: int, body: Dictionary) -> void:
 					get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 					password_input.text = ""
 				409:
-					_set_status("That username is already taken.", false)
+					_set_status("Ce nom d'utilisateur est déjà pris.", false)
 				422:
-					_set_status("Please enter a valid username and password.", false)
+					_set_status("Veuillez saisir un nom d'utilisateur et un mot de passe valides.", false)
 				_:
-					_set_status(body.get("detail", "Registration failed (error %d)." % response_code), false)
+					_set_status(body.get("detail", "Échec de l'inscription (erreur %d)." % response_code), false)
 
 	_pending_action = ""
 

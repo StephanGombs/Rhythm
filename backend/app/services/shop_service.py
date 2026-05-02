@@ -9,7 +9,7 @@ from ..config import settings
 
 
 SHOP_ITEMS = [
-    ShopItem(item_type="shield", price=settings.shield_price, description="Protects against one missed note"),
+    ShopItem(item_type="shield", price=settings.shield_price, description="Protège contre une note manquée"),
 ]
 
 
@@ -22,11 +22,11 @@ class ShopService:
 
     async def purchase_shields(self, data: PurchaseRequest) -> PurchaseResponse:
         if data.quantity <= 0:
-            raise InvalidQuantityError("Quantity must be at least 1")
+            raise InvalidQuantityError("La quantité doit être d'au moins 1")
 
         item = next((i for i in SHOP_ITEMS if i.item_type == data.item_type), None)
         if not item:
-            raise ValueError(f"Unknown item type: {data.item_type}")
+            raise ValueError(f"Type d'article inconnu : {data.item_type}")
 
         total_cost = item.price * data.quantity
 
@@ -49,7 +49,7 @@ class ShopService:
             )
             funds = check.scalar_one_or_none()
             if funds is None:
-                raise UserNotFoundError(f"User '{data.user_id}' not found")
+                raise UserNotFoundError(f"Utilisateur '{data.user_id}' introuvable")
             raise InsufficientFundsError(needed=total_cost, available=float(funds))
 
         purchase = Purchase(

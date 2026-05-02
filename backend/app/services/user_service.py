@@ -19,7 +19,7 @@ class UserService:
     async def create_user(self, data: UserCreate) -> User:
         result = await self.db.execute(select(User).where(User.username == data.username))
         if result.scalar_one_or_none():
-            raise UserAlreadyExistsError(f"Username '{data.username}' is already taken")
+            raise UserAlreadyExistsError(f"Le nom d'utilisateur '{data.username}' est déjà pris")
 
         user = User(
             id=str(uuid.uuid4()),
@@ -34,14 +34,14 @@ class UserService:
         result = await self.db.execute(select(User).where(User.username == username))
         user = result.scalar_one_or_none()
         if not user or not await verify_password(password, user.password_hash):
-            raise InvalidCredentialsError("Invalid username or password")
+            raise InvalidCredentialsError("Nom d'utilisateur ou mot de passe invalide")
         return user
 
     async def get_user_by_id(self, user_id: str) -> User:
         result = await self.db.execute(select(User).where(User.id == user_id))
         user = result.scalar_one_or_none()
         if not user:
-            raise UserNotFoundError(f"User '{user_id}' not found")
+            raise UserNotFoundError(f"Utilisateur '{user_id}' introuvable")
         return user
 
     async def update_funds(self, user_id: str, amount: float) -> User:
@@ -53,7 +53,7 @@ class UserService:
         )
         user = result.scalar_one_or_none()
         if not user:
-            raise UserNotFoundError(f"User '{user_id}' not found")
+            raise UserNotFoundError(f"Utilisateur '{user_id}' introuvable")
         return user
 
     async def update_shields(self, user_id: str, delta: int) -> User:
@@ -65,7 +65,7 @@ class UserService:
         )
         user = result.scalar_one_or_none()
         if not user:
-            raise UserNotFoundError(f"User '{user_id}' not found")
+            raise UserNotFoundError(f"Utilisateur '{user_id}' introuvable")
         return user
 
     async def consume_shield(self, user_id: str) -> User:
@@ -82,6 +82,6 @@ class UserService:
             )
             shields = check.scalar_one_or_none()
             if shields is None:
-                raise UserNotFoundError(f"User '{user_id}' not found")
-            raise InsufficientShieldsError("No shields available to consume")
+                raise UserNotFoundError(f"Utilisateur '{user_id}' introuvable")
+            raise InsufficientShieldsError("Aucun bouclier disponible")
         return user

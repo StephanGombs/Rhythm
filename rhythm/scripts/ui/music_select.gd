@@ -43,7 +43,7 @@ func _ready() -> void:
 	if UserSession.selected_music_path.is_empty():
 		UserSession.select_music(TRACKS[0]["title"], TRACKS[0]["path"])
 	_refresh_selection()
-	status_label.text = "Choose a song, then start the run."
+	status_label.text = "Choisissez une chanson, puis commencez la partie."
 	UIPolishScript.style_buttons(_track_buttons)
 	UIPolishScript.style_buttons([start_button, back_button])
 	UIPolishScript.animate_scene_in(self)
@@ -68,7 +68,7 @@ func _on_track_pressed(title: String, path: String) -> void:
 
 
 func _refresh_selection() -> void:
-	selected_label.text = "Selected: %s" % UserSession.selected_music_title
+	selected_label.text = "Sélectionné : %s" % UserSession.selected_music_title
 	for button in _track_buttons:
 		button.button_pressed = button.text == UserSession.selected_music_title
 		button.modulate = Color(0.75, 1.0, 0.92, 1.0) if button.button_pressed else Color.WHITE
@@ -76,7 +76,7 @@ func _refresh_selection() -> void:
 
 func _on_start_pressed() -> void:
 	if not UserSession.is_logged_in:
-		status_label.text = "Please log in first."
+		status_label.text = "Veuillez d'abord vous connecter."
 		return
 	get_tree().change_scene_to_file("res://scenes/game.tscn")
 
